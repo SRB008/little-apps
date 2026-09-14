@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Savings Interest Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: #f3f6fc;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .card {
+            background: white;
+            max-width: 520px;
+            width: 100%;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -8px rgba(0, 20, 30, 0.2);
+            padding: 2rem 2rem 2.2rem;
+            transition: all 0.2s;
+        }
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            margin: 0 0 0.25rem 0;
+            color: #0a2540;
+            letter-spacing: -0.02em;
+        }
+        .subhead {
+            color: #5b6f82;
+            font-size: 0.95rem;
+            margin-top: 0;
+            margin-bottom: 1.8rem;
+            border-left: 4px solid #1e7e83;
+            padding-left: 0.85rem;
+            background: #f0f7f9;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.4;
+            font-weight: 400;
+        }
+        .input-group {
+            margin-bottom: 1.3rem;
+        }
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1e3f5c;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.01em;
+        }
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            background: #f9fbfe;
+            border: 1.5px solid #dae2ed;
+            border-radius: 14px;
+            padding: 0 0.2rem 0 1rem;
+            transition: border 0.15s, box-shadow 0.15s;
+        }
+        .input-wrapper:focus-within {
+            border-color: #1e7e83;
+            box-shadow: 0 0 0 3px rgba(30, 126, 131, 0.15);
+            background: #ffffff;
+        }
+        .input-wrapper span {
+            font-weight: 500;
+            color: #2b4e6e;
+            font-size: 1rem;
+            padding-right: 0.2rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.85rem 0.8rem 0.85rem 0.2rem;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #0a2540;
+            outline: none;
+            font-family: inherit;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        select {
+            cursor: pointer;
+            padding-right: 0.5rem;
+            background: transparent;
+            font-weight: 500;
+            color: #0a2540;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232b4e6e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.8rem center;
+            background-size: 1rem;
+        }
+        .duration-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        .duration-row .input-wrapper {
+            flex: 3;
+        }
+        .duration-row .input-wrapper select {
+            padding-left: 0.2rem;
+            padding-right: 1.8rem;
+        }
+        .duration-row .input-wrapper input {
+            padding-left: 0.2rem;
+        }
+        .duration-unit {
+            flex: 1.2;
+            min-width: 95px;
+        }
+        .duration-unit .input-wrapper {
+            padding-left: 0.6rem;
+            background: #f0f5fa;
+            border-color: #cddae8;
+        }
+        .duration-unit select {
+            font-weight: 500;
+            color: #0d3f4b;
+        }
+        .calc-btn {
+            width: 100%;
+            background: #0b2b3b;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            margin: 1.2rem 0 1.5rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.05s;
+            box-shadow: 0 6px 14px rgba(11, 43, 59, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .calc-btn:hover {
+            background: #1b4a5e;
+        }
+        .calc-btn:active {
+            transform: scale(0.98);
+        }
+        .result-box {
+            background: #eef7f9;
+            border-radius: 20px;
+            padding: 1.5rem 1.5rem 1.4rem;
+            text-align: center;
+            border: 1px solid #bfdee5;
+            transition: opacity 0.2s;
+        }
+        .result-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 600;
+            color: #1d6b72;
+            margin-bottom: 0.3rem;
+        }
+        .result-value {
+            font-size: 2.3rem;
+            font-weight: 700;
+            color: #0a2e3b;
+            line-height: 1.2;
+            margin-bottom: 0.2rem;
+            word-break: break-word;
+        }
+        .result-detail {
+            font-size: 0.9rem;
+            color: #3c627c;
+            margin-top: 0.4rem;
+            background: rgba(255, 255, 255, 0.6);
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            border-radius: 40px;
+            font-weight: 450;
+        }
+        .error-msg {
+            color: #b13e3e;
+            background: #ffebeb;
+            border-radius: 10px;
+            padding: 0.7rem 1rem;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+            border-left: 4px solid #b13e3e;
+            font-weight: 500;
+        }
+        .input-hint {
+            font-size: 0.8rem;
+            color: #657f94;
+            margin-top: 0.35rem;
+            padding-left: 0.3rem;
+        }
+        .flex-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .flex-row .input-group {
+            flex: 1 1 180px;
+        }
+        /* small adjustments */
+        .input-wrapper input::placeholder {
+            color: #9aaebf;
+            font-weight: 400;
+            font-size: 0.95rem;
+        }
+        .duration-unit .input-wrapper span {
+            display: none;
+        }
+        .duration-row .input-wrapper:first-child span {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>💰 Savings Interest</h1>
+        <div class="subhead">Interest earned on savings using AER%</div>
+
+        <!-- Amount -->
+        <div class="input-group">
+            <label for="amount">Amount</label>
+            <div class="input-wrapper">
+                <span>£</span>
+                <input type="number" id="amount" placeholder="1000" min="0" step="any" value="1000">
+            </div>
+        </div>
+
+        <!-- AER Rate -->
+        <div class="input-group">
+            <label for="aer">Interest rate (AER)</label>
+            <div class="input-wrapper">
+                <input type="number" id="aer" placeholder="5.0" min="0" step="any" value="5.0">
+                <span>%</span>
+            </div>
+        </div>
+
+        <!-- Duration: number + unit -->
+        <div class="input-group">
+            <label>Duration</label>
+            <div class="duration-row">
+                <div class="input-wrapper">
+                    <input type="number" id="durationValue" placeholder="12" min="0" step="any" value="12">
+                </div>
+                <div class="duration-unit input-wrapper">
+                    <select id="durationUnit">
+                        <option value="days">Days</option>
+                        <option value="weeks">Weeks</option>
+                        <option value="months" selected>Months</option>
+                    </select>
+                </div>
+            </div>
+            <div class="input-hint">⏱️ Select days, weeks or months</div>
+        </div>
+
+        <!-- Calculate button -->
+        <button class="calc-btn" id="calcBtn">
+            <span>Calculate interest</span>
+            <span style="font-size: 1.2rem;">→</span>
+        </button>
+
+        <!-- Result area -->
+        <div class="result-box" id="resultBox">
+            <div class="result-label">Interest earned</div>
+            <div class="result-value" id="interestResult">£0.00</div>
+            <div class="result-detail" id="resultDetail"></div>
+        </div>
+        <div class="error-msg" id="errorMsg"></div>
+    </div>
+
+    <script>
+        (function() {
+            // DOM elements
+            const amountInput = document.getElementById('amount');
+            const aerInput = document.getElementById('aer');
+            const durationValueInput = document.getElementById('durationValue');
+            const durationUnitSelect = document.getElementById('durationUnit');
+            const calcBtn = document.getElementById('calcBtn');
+            const interestResultSpan = document.getElementById('interestResult');
+            const resultDetailSpan = document.getElementById('resultDetail');
+            const errorMsgDiv = document.getElementById('errorMsg');
+
+            // Helper: format currency
+            function formatCurrency(amount) {
+                return '£' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
+
+            // Convert duration to years (fractional)
+            function durationInYears(value, unit) {
+                switch (unit) {
+                    case 'days':
+                        return value / 365;
+                    case 'weeks':
+                        return value / 52;   // 52 weeks per year
+                    case 'months':
+                        return value / 12;   // 12 months per year
+                    default:
+                        return 0;
+                }
+            }
+
+            // Get a human readable description of duration
+            function formatDurationDescription(value, unit) {
+                const unitSingular = unit.slice(0, -1); // remove 's' for singular
+                const unitPlural = unit;
+                if (value === 1) {
+                    return `${value} ${unitSingular}`;
+                } else {
+                    return `${value} ${unitPlural}`;
+                }
+            }
+
+            // Main calculation and display
+            function calculateAndDisplay() {
+                // Hide error initially
+                errorMsgDiv.style.display = 'none';
+                errorMsgDiv.textContent = '';
+
+                // Read raw values
+                const amount = parseFloat(amountInput.value);
+                const aer = parseFloat(aerInput.value);
+                const durationValue = parseFloat(durationValueInput.value);
+                const unit = durationUnitSelect.value;
+
+                // --- Validation ---
+                const errors = [];
+
+                if (isNaN(amount) || amount < 0) {
+                    errors.push('Please enter a valid positive amount.');
+                }
+                if (isNaN(aer) || aer < 0) {
+                    errors.push('Please enter a valid positive interest rate (AER).');
+                }
+                if (isNaN(durationValue) || durationValue < 0) {
+                    errors.push('Please enter a valid positive duration.');
+                }
+
+                // Additional check: zero duration -> no interest, but we allow it. Zero amount -> zero interest.
+                // Also avoid infinite or extreme values? We'll just handle gracefully.
+                if (errors.length > 0) {
+                    errorMsgDiv.textContent = errors.join(' ');
+                    errorMsgDiv.style.display = 'block';
+                    // Clear result or set to placeholder?
+                    interestResultSpan.textContent = '—';
+                    resultDetailSpan.textContent = '';
+                    return;
+                }
+
+                // --- Calculation ---
+                // Interest = Amount * ((1 + AER/100)^(years) - 1)
+                // Simple approach using AER as annual rate, compounded annually.
+                // For fractional years, we use the standard compound interest formula.
+                const principal = amount;
+                const annualRate = aer / 100;
+                const years = durationInYears(durationValue, unit);
+
+                // Edge case: if principal is 0 or rate is 0 or years is 0 => interest 0
+                let interest = 0;
+                if (principal === 0 || annualRate === 0 || years === 0) {
+                    interest = 0;
+                } else {
+                    // Compound annually: A = P * (1 + r)^t, interest = A - P
+                    const compoundFactor = Math.pow(1 + annualRate, years);
+                    interest = principal * (compoundFactor - 1);
+                }
+
+                // Ensure interest is not negative (shouldn't happen with positive inputs)
+                if (interest < 0) interest = 0;
+
+                // Format output
+                interestResultSpan.textContent = formatCurrency(interest);
+
+                // Build detail message
+                const durationDesc = formatDurationDescription(durationValue, unit);
+                const rateFormatted = aer.toFixed(2) + '%';
+                const amountFormatted = formatCurrency(amount);
+                // If duration is 0, special note
+                if (durationValue === 0) {
+                    resultDetailSpan.textContent = `For a zero duration, interest is £0.00.`;
+                } else {
+                    resultDetailSpan.textContent = `${amountFormatted} at ${rateFormatted} for ${durationDesc}`;
+                }
+            }
+
+            // Initialize with calculation on page load (using default values)
+            window.addEventListener('load', function() {
+                calculateAndDisplay();
+            });
+
+            // Button click
+            calcBtn.addEventListener('click', calculateAndDisplay);
+
+            // Also recalc when user presses Enter in any input
+            const inputs = [amountInput, aerInput, durationValueInput, durationUnitSelect];
+            inputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        calculateAndDisplay();
+                    }
+                });
+            });
+
+            // Optional: live recalculation when unit changes (makes it snappy)
+            durationUnitSelect.addEventListener('change', calculateAndDisplay);
+
+            // Optionally recalc on blur for better UX? We'll keep it on button + enter + change.
+            // But to avoid confusion, we can also recalc on input changes with debounce? Not necessary.
+            // For better UX we could auto-recalc, but the user might expect a button.
+            // We'll stick to button + Enter, plus the change on unit.
+        })();
+    </script>
+</body>
+</html>
