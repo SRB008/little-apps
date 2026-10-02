@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interest Calculator · value × rate</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: #f4f7fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -8px rgba(0, 20, 30, 0.2);
+            padding: 30px 28px;
+            max-width: 1000px;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #0b2a41;
+            margin-top: 0;
+            margin-bottom: 6px;
+        }
+
+        .subhead {
+            color: #4c6479;
+            margin-bottom: 24px;
+            font-size: 0.98rem;
+            border-left: 4px solid #2d7ff9;
+            padding-left: 14px;
+            background: #f0f6ff;
+            border-radius: 0 12px 12px 0;
+            line-height: 1.4;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 18px;
+            border: 1px solid #e2eaf2;
+            background: #ffffff;
+            margin-bottom: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.98rem;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #eef5fe;
+            color: #124072;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            padding: 16px 14px;
+            text-align: left;
+            border-bottom: 2px solid #cbdae9;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e6edf5;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        input {
+            width: 100%;
+            min-width: 90px;
+            padding: 10px 12px;
+            border: 1.5px solid #d9e2ec;
+            border-radius: 14px;
+            font-size: 0.96rem;
+            background: #ffffff;
+            transition: 0.15s;
+            outline: none;
+            font-weight: 500;
+            color: #0b2a41;
+        }
+
+        input:focus {
+            border-color: #2d7ff9;
+            box-shadow: 0 0 0 3px rgba(45, 127, 249, 0.15);
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .label-input {
+            min-width: 140px;
+            font-weight: 500;
+            color: #1f3b58;
+        }
+
+        .interest-cell {
+            font-weight: 600;
+            color: #1b5e3a;
+            background: #f6fff9;
+            text-align: right;
+            font-family: 'JetBrains Mono', 'SF Mono', monospace;
+            letter-spacing: -0.01em;
+        }
+
+        .row-actions {
+            text-align: center;
+            width: 60px;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            line-height: 1;
+            color: #9babbd;
+            cursor: pointer;
+            padding: 6px 8px;
+            border-radius: 40px;
+            transition: 0.1s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            font-weight: 400;
+        }
+
+        .remove-btn:hover {
+            background: #fee9e9;
+            color: #d14545;
+        }
+
+        .add-row-btn {
+            background: #f0f6ff;
+            border: 1.5px dashed #b8cce4;
+            color: #1f5faa;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 12px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.15s;
+            margin-bottom: 20px;
+            border-style: dashed;
+        }
+
+        .add-row-btn:hover {
+            background: #e4efff;
+            border-color: #2d7ff9;
+            color: #0d3d7a;
+        }
+
+        .summary {
+            background: #f7faff;
+            border-radius: 22px;
+            padding: 20px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #d0e0f0;
+            box-shadow: inset 0 1px 3px rgba(255,255,255,0.8), 0 6px 12px -8px rgba(0,0,0,0.1);
+            margin-top: 8px;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1 1 180px;
+        }
+
+        .summary-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            color: #4b6b8a;
+        }
+
+        .summary-value {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0b2a41;
+            line-height: 1.2;
+            font-family: 'JetBrains Mono', 'SF Mono', monospace;
+            letter-spacing: -0.02em;
+        }
+
+        .summary-value small {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #52718e;
+            margin-left: 4px;
+            font-family: system-ui, sans-serif;
+        }
+
+        .combined-highlight {
+            background: #e2efff;
+            border-radius: 18px;
+            padding: 8px 16px;
+            color: #0d3d7a;
+        }
+
+        .combined-rate {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #1f5faa;
+            background: #ffffffc0;
+            border-radius: 14px;
+            padding: 4px 16px;
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .footnote {
+            margin-top: 16px;
+            font-size: 0.78rem;
+            color: #7b91a8;
+            text-align: center;
+            border-top: 1px solid #e6edf5;
+            padding-top: 16px;
+        }
+
+        .footnote code {
+            background: #eef3f8;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+
+        @media (max-width: 700px) {
+            .card { padding: 20px 16px; }
+            .summary { flex-direction: column; align-items: stretch; gap: 16px; }
+            .summary-value { font-size: 1.5rem; }
+            input { min-width: 70px; font-size: 0.9rem; padding: 8px 10px; }
+            .label-input { min-width: 100px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>📊 Interest table</h1>
+        <div class="subhead">
+            Each row: label, value &amp; rate · interest = value × rate. Combined rate uses total interest and total value.
+        </div>
+
+        <!-- table -->
+        <div class="table-wrapper">
+            <table id="interestTable">
+                <thead>
+                    <tr>
+                        <th>Label</th>
+                        <th>Value (£)</th>
+                        <th>Interest rate (%)</th>
+                        <th>Interest (£)</th>
+                        <th class="row-actions"></th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- rows will be generated dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <button class="add-row-btn" id="addRowBtn">
+            <span style="font-size:1.2rem;">+</span> Add row
+        </button>
+
+        <!-- summary / combined interest -->
+        <div class="summary" id="summaryPanel">
+            <div class="summary-item">
+                <span class="summary-label">Total value</span>
+                <span class="summary-value" id="totalValue">0.00</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Total interest</span>
+                <span class="summary-value" id="totalInterest">0.00</span>
+            </div>
+            <div class="summary-item combined-highlight">
+                <span class="summary-label">Combined rate</span>
+                <span class="combined-rate" id="combinedRate">0.00%</span>
+            </div>
+        </div>
+        <div class="footnote">
+            Combined rate = (total interest / total value) × 100 &nbsp;|&nbsp; updates live
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // --- DOM elements ---
+            const tbody = document.getElementById('tableBody');
+            const addRowBtn = document.getElementById('addRowBtn');
+            const totalValueEl = document.getElementById('totalValue');
+            const totalInterestEl = document.getElementById('totalInterest');
+            const combinedRateEl = document.getElementById('combinedRate');
+
+            // --- helpers ---
+            function formatNumber(value, decimals = 2) {
+                return Number(value).toFixed(decimals);
+            }
+
+            // --- core calculation & update ---
+            function recalculateAndRender() {
+                const rows = tbody.querySelectorAll('tr');
+                let totalValue = 0;
+                let totalInterest = 0;
+
+                // first pass: compute values, update interest cell, collect totals
+                rows.forEach(row => {
+                    const valueInput = row.querySelector('.value-input');
+                    const rateInput = row.querySelector('.rate-input');
+                    const interestCell = row.querySelector('.interest-cell');
+
+                    if (!valueInput || !rateInput || !interestCell) return;
+
+                    // parse, default to 0 if empty or invalid
+                    let value = parseFloat(valueInput.value);
+                    let rate = parseFloat(rateInput.value);
+
+                    if (isNaN(value) || value < 0) value = 0;
+                    if (isNaN(rate) || rate < 0) rate = 0;
+
+                    const interest = value * (rate / 100);   // rate in percent
+
+                    // update interest cell display
+                    interestCell.textContent = formatNumber(interest, 2);
+
+                    // accumulate
+                    totalValue += value;
+                    totalInterest += interest;
+                });
+
+                // update summary totals
+                totalValueEl.textContent = formatNumber(totalValue, 2);
+                totalInterestEl.textContent = formatNumber(totalInterest, 2);
+
+                // combined rate = (totalInterest / totalValue) * 100
+                let combinedRate = 0;
+                if (totalValue > 0) {
+                    combinedRate = (totalInterest / totalValue) * 100;
+                }
+                combinedRateEl.textContent = formatNumber(combinedRate, 2) + '%';
+            }
+
+            // --- create a new table row with given values (or defaults) ---
+            function createRow(label = '', value = '', rate = '') {
+                const tr = document.createElement('tr');
+
+                // label cell
+                const tdLabel = document.createElement('td');
+                const labelInput = document.createElement('input');
+                labelInput.type = 'text';
+                labelInput.className = 'label-input';
+                labelInput.placeholder = 'e.g. Savings, Loan';
+                labelInput.value = label;
+                tdLabel.appendChild(labelInput);
+
+                // value cell
+                const tdValue = document.createElement('td');
+                const valueInput = document.createElement('input');
+                valueInput.type = 'number';
+                valueInput.className = 'value-input';
+                valueInput.placeholder = 'e.g. 5000';
+                valueInput.step = 'any';
+                valueInput.min = '0';
+                valueInput.value = value;
+                tdValue.appendChild(valueInput);
+
+                // rate cell
+                const tdRate = document.createElement('td');
+                const rateInput = document.createElement('input');
+                rateInput.type = 'number';
+                rateInput.className = 'rate-input';
+                rateInput.placeholder = 'e.g. 4.25';
+                rateInput.step = 'any';
+                rateInput.min = '0';
+                rateInput.value = rate;
+                tdRate.appendChild(rateInput);
+
+                // interest cell (read-only)
+                const tdInterest = document.createElement('td');
+                tdInterest.className = 'interest-cell';
+                tdInterest.textContent = '0.00';
+
+                // action cell (remove button)
+                const tdAction = document.createElement('td');
+                tdAction.className = 'row-actions';
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.innerHTML = '✕';
+                removeBtn.setAttribute('aria-label', 'Remove row');
+                removeBtn.title = 'Remove row';
+                tdAction.appendChild(removeBtn);
+
+                tr.appendChild(tdLabel);
+                tr.appendChild(tdValue);
+                tr.appendChild(tdRate);
+                tr.appendChild(tdInterest);
+                tr.appendChild(tdAction);
+
+                // attach input listeners (recalculate on any change)
+                // Note: label doesn't affect calculations, but we attach to value & rate.
+                valueInput.addEventListener('input', recalculateAndRender);
+                rateInput.addEventListener('input', recalculateAndRender);
+                // Label input doesn't need calculation but we can keep for consistency.
+                labelInput.addEventListener('input', function() {
+                    // no recalculation needed; but we might want to re-run to be safe? not needed
+                    // (but if you want to be safe, call recalculateAndRender? doesn't hurt)
+                });
+
+                // remove row handler
+                removeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // don't allow removing the last row? we keep at least one row
+                    if (tbody.rows.length <= 1) {
+                        // Instead of removing, reset the row to empty values
+                        labelInput.value = '';
+                        valueInput.value = '';
+                        rateInput.value = '';
+                        recalculateAndRender();
+                        return;
+                    }
+                    tr.remove();
+                    recalculateAndRender();
+                });
+
+                return tr;
+            }
+
+            // --- add a new row (appends to table) ---
+            function addRow(label = '', value = '', rate = '') {
+                const newRow = createRow(label, value, rate);
+                tbody.appendChild(newRow);
+            }
+
+            // --- initialize table with a few sample rows (clear, then add) ---
+            function initializeTable() {
+                tbody.innerHTML = ''; // clear any existing
+
+                // Add 3 sample rows with descriptive labels
+                addRow('Savings account', 2000, 3.5);
+                addRow('Bond portfolio', 7500, 5.2);
+                addRow('High-yield savings', 1200, 1.8);
+
+                // After adding, make sure calculations run
+                recalculateAndRender();
+            }
+
+            // --- Event listeners ---
+            addRowBtn.addEventListener('click', function() {
+                // add a blank row (empty label, value, rate)
+                const newRow = createRow('', '', '');
+                tbody.appendChild(newRow);
+                // focus on the new label input
+                const lastRow = tbody.lastElementChild;
+                if (lastRow) {
+                    const firstInput = lastRow.querySelector('.label-input');
+                    if (firstInput) firstInput.focus();
+                }
+                // recalc (blank row adds 0)
+                recalculateAndRender();
+            });
+
+            // Additional safety: recalc if any input changes (delegation works)
+            tbody.addEventListener('input', function(e) {
+                if (e.target.matches('.value-input, .rate-input')) {
+                    recalculateAndRender();
+                }
+            });
+
+            // Initialize the table with sample data
+            initializeTable();
+        })();
+    </script>
+</body>
+</html>
